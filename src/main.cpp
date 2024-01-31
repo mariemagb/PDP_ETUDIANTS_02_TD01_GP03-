@@ -3,6 +3,16 @@
 #include <DHT.h>
 #include <DHT_U.h>
 
+#define BLYNK_PRINT Serial
+
+#define BLYNK_TEMPLATE_ID "TMPL50v9YB7Gu"
+#define BLYNK_TEMPLATE_NAME "GERNAIN"
+#define BLYNK_AUTH_TOKEN "8wnWzji7YPcl8lslcKNjImBYO2BRGzJi"
+
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+
 // Define the pins that we will use
 #define SENSOR 33
 #define LED 26
@@ -10,10 +20,8 @@
 
 DHT_Unified dht(SENSOR, DHTTYPE);
 
-// WiFi credentials go here
-// ...
-// ...
-// ...
+char ssid[] = "iPhone de Germain";
+char pass[] = "caca1234";
 
 void setup() {
   // Setup pins
@@ -24,10 +32,8 @@ void setup() {
   Serial.begin(9600);
   delay(100);
 
-  // begin the Blynk session
-  // ...
-  // ...
-  // ...
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+  Blynk.run();
 
   // Start listening to the DHT11
   dht.begin();
@@ -58,10 +64,13 @@ void setup() {
     relative_humidity_measure = event.relative_humidity;
   }
 
-  // Send data to Blynk
-  // ...
-  // ...
-  // ...
+  if (!isnan(temp_measure)) {
+    Blynk.virtualWrite(V1, temp_measure);  
+  }
+
+  if (!isnan(relative_humidity_measure)) {
+    Blynk.virtualWrite(V0, relative_humidity_measure); 
+  }
 
   Serial.println("Going to sleep for 5 seconds...");
   delay(100);
