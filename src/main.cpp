@@ -15,18 +15,33 @@
 
 // Define the pins that we will use
 #define SENSOR 33
-#define LED 26
+#define LED 25
 #define DHTTYPE DHT11
 
 DHT_Unified dht(SENSOR, DHTTYPE);
 
-char ssid[] = "iPhone de Germain";
-char pass[] = "caca1234";
+char ssid[] = "la ratiera";
+char pass[] = "swing000";
+ 
+BLYNK_WRITE(V2)
+{
+  int pinValue = param.asInt(); // assigning incoming value from pin V0 to a variable
+  Serial.print("Received value from Blynk: ");
+  Serial.println(pinValue);
+  if(pinValue==1){
+    digitalWrite(LED,HIGH);
+  }else{
+    digitalWrite(LED,LOW);
+  }
+  
+  // Delay is only there so that we get a chance to see the LED value properly.
+  delay(5000);
+}
 
 void setup() {
+  
   // Setup pins
   pinMode(LED, OUTPUT);
-  digitalWrite(LED, LOW);
 
   // Begin serial communication
   Serial.begin(9600);
@@ -34,6 +49,7 @@ void setup() {
 
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   Blynk.run();
+  Blynk.syncVirtual(V2);
 
   // Start listening to the DHT11
   dht.begin();
